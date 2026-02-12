@@ -5,7 +5,6 @@ import L from 'leaflet';
 import 'leaflet.markercluster';
 
 // Helper to calculate a quadratic bezier curve between two lat/lng points
-// This creates the "flight path" arch effect
 function getCurvePoints(start: L.LatLngExpression, end: L.LatLngExpression, offsetFactor = 0.2): L.LatLngExpression[] {
     const lat1 = (start as any)[0];
     const lng1 = (start as any)[1];
@@ -39,40 +38,39 @@ export const GlobalNodes: React.FC = () => {
     const map = L.map(mapContainerRef.current, {
       center: [25, 10], 
       zoom: 1.5,
-      zoomControl: true, // Enable zoom buttons
+      zoomControl: true, // Enabled zoom control
       attributionControl: false,
-      scrollWheelZoom: false, // Disable scroll zoom
-      dragging: true, // Keep dragging enabled
-      doubleClickZoom: false, // Disable double click zoom
-      boxZoom: false, // Disable box zoom
-      keyboard: false, // Disable keyboard controls
-      touchZoom: false, // Disable touch zoom
+      scrollWheelZoom: true, // Enabled scroll zoom for better UX if they want to control it
+      dragging: true,
+      doubleClickZoom: true,
+      boxZoom: false,
+      keyboard: false,
+      touchZoom: true,
     });
     mapInstanceRef.current = map;
 
-    // 2. Add Tile Layer (CartoDB Light for clean look)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    // 2. Add Dark Theme Tile Layer (CartoDB Dark Matter)
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19,
       subdomains: 'abcd',
-      opacity: 0.9
+      opacity: 1
     }).addTo(map);
 
-    // 3. Define Custom Icons
+    // 3. Define Custom Icons - Neon Style
     const createNodeIcon = (isMain: boolean = false) => L.divIcon({
       className: 'custom-pin',
       html: `
-        <div style="position: relative; width: ${isMain ? 24 : 16}px; height: ${isMain ? 24 : 16}px; display: flex; align-items: center; justify-content: center;">
-          <div style="position: absolute; width: 100%; height: 100%; background-color: ${isMain ? '#3B82F6' : '#FF6A00'}; border-radius: 50%; opacity: 0.3; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
-          <div style="position: absolute; width: ${isMain ? 10 : 6}px; height: ${isMain ? 10 : 6}px; background-color: ${isMain ? '#3B82F6' : '#FF6A00'}; border-radius: 50%; opacity: 0.9; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);"></div>
-          ${isMain ? '<div style="position: relative; width: 4px; height: 4px; background-color: white; border-radius: 50%;"></div>' : ''}
+        <div style="position: relative; width: ${isMain ? 24 : 12}px; height: ${isMain ? 24 : 12}px; display: flex; align-items: center; justify-content: center;">
+          <div style="position: absolute; width: 100%; height: 100%; background-color: ${isMain ? '#FF6A00' : '#00F0FF'}; border-radius: 50%; opacity: 0.4; animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+          <div style="position: absolute; width: ${isMain ? 10 : 6}px; height: ${isMain ? 10 : 6}px; background-color: ${isMain ? '#FF6A00' : '#00F0FF'}; border-radius: 50%; opacity: 1; box-shadow: 0 0 10px ${isMain ? '#FF6A00' : '#00F0FF'};"></div>
         </div>
         <style>@keyframes ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }</style>
       `,
-      iconSize: [isMain ? 24 : 16, isMain ? 24 : 16],
-      iconAnchor: [isMain ? 12 : 8, isMain ? 12 : 8],
+      iconSize: [isMain ? 24 : 12, isMain ? 24 : 12],
+      iconAnchor: [isMain ? 12 : 6, isMain ? 12 : 6],
     });
 
-    // 4. Data Points (Hubs)
+    // 4. Data Points
     const mainNodes = [
       { id: 'sf', name: "Silicon Valley", coords: [37.77, -122.41] },
       { id: 'va', name: "Virginia", coords: [38.90, -77.03] },
@@ -83,12 +81,11 @@ export const GlobalNodes: React.FC = () => {
       { id: 'tok', name: "Tokyo", coords: [35.67, 139.65] }
     ];
 
-    // Generate random sub-nodes around main nodes to demonstrate clustering
     const allNodes: any[] = [...mainNodes.map(n => ({ ...n, type: 'main' }))];
     mainNodes.forEach(node => {
-        for (let i = 0; i < 8; i++) {
-            const lat = node.coords[0] + (Math.random() - 0.5) * 15;
-            const lng = node.coords[1] + (Math.random() - 0.5) * 15;
+        for (let i = 0; i < 5; i++) {
+            const lat = node.coords[0] + (Math.random() - 0.5) * 20;
+            const lng = node.coords[1] + (Math.random() - 0.5) * 20;
             allNodes.push({
                 id: `${node.id}_sub_${i}`,
                 name: `${node.name} Edge-${i+1}`,
@@ -98,51 +95,36 @@ export const GlobalNodes: React.FC = () => {
         }
     });
 
-    // 5. Create Marker Cluster Group
-    // @ts-ignore - Leaflet.markercluster adds this to L
     const markers = L.markerClusterGroup({
         showCoverageOnHover: false,
         zoomToBoundsOnClick: true,
         spiderfyOnMaxZoom: true,
         removeOutsideVisibleBounds: true,
-        // Custom cluster icon styling
         iconCreateFunction: function (cluster: any) {
             const childCount = cluster.getChildCount();
-            let c = ' marker-cluster-';
-            if (childCount < 10) {
-                c += 'small';
-            } else if (childCount < 100) {
-                c += 'medium';
-            } else {
-                c += 'large';
-            }
-
-            // Custom HTML for the cluster icon
             return L.divIcon({ 
-                html: `<div class="w-full h-full flex items-center justify-center"><span>${childCount}</span></div>`, 
+                html: `<div class="w-full h-full flex items-center justify-center text-xs text-white font-mono font-bold bg-blue-600/30 border border-blue-500 rounded-full backdrop-blur-sm box-content" style="box-shadow: 0 0 10px #3B82F6"><span>${childCount}</span></div>`, 
                 className: 'custom-cluster', 
                 iconSize: new L.Point(40, 40) 
             });
         }
     });
 
-    // Add markers to the cluster group
     allNodes.forEach(node => {
       const isMain = node.type === 'main';
       const marker = L.marker(node.coords as L.LatLngExpression, { icon: createNodeIcon(isMain) })
         .bindTooltip(node.name, { 
             permanent: false, 
             direction: 'top', 
-            className: 'bg-white px-2 py-1 rounded shadow-md text-xs font-bold border border-gray-100 text-gray-700',
+            className: 'bg-black/80 text-white border border-white/20 px-2 py-1 rounded text-xs font-mono',
             offset: [0, isMain ? -12 : -8]
         });
       markers.addLayer(marker);
     });
 
-    // Add cluster group to map
     map.addLayer(markers);
 
-    // 6. Draw Curved Connecting Lines (Only between main nodes)
+    // 6. Draw Glowing Lines
     const routes = [
         ['sh', 'sf'], ['sf', 'va'], ['va', 'fra'], ['fra', 'sh'],
         ['sh', 'sg'], ['sg', 'syd'], ['sh', 'tok'], ['tok', 'sf'],
@@ -159,17 +141,17 @@ export const GlobalNodes: React.FC = () => {
                 endNode.coords as L.LatLngExpression
             );
 
-            // Backing line for visibility
+            // Backing line
             L.polyline(curvePoints, {
-                color: '#93C5FD', // Light Blue
-                weight: 3,
+                color: '#1E40AF', 
+                weight: 1,
                 opacity: 0.3,
                 interactive: false
             }).addTo(map);
 
-            // Animated dash line
+            // Animated dash line (Cyan)
             L.polyline(curvePoints, {
-                color: '#2563EB', // Strong Blue
+                color: '#00F0FF',
                 weight: 2,
                 opacity: 0.8,
                 className: 'flowing-line',
@@ -178,38 +160,28 @@ export const GlobalNodes: React.FC = () => {
         }
     });
 
-    // 7. Add Subtle "Pulse" Coverage Circles (Background decoration)
-    const zones = [
-        { coords: [35, -100], radius: 3500000 },
-        { coords: [35, 105], radius: 4500000 },
-        { coords: [45, 10], radius: 2500000 },
-    ];
-
-    zones.forEach(zone => {
-        L.circle(zone.coords as L.LatLngExpression, {
-            color: 'transparent',
-            fillColor: '#FF6A00',
-            fillOpacity: 0.03,
-            radius: zone.radius,
-            interactive: false
-        }).addTo(map);
-    });
-
-    // 8. Auto-pan Animation
+    // 8. Auto-pan (Optional: Disable if user wants to control manually, but can keep for effect if not interacting)
+    // We'll keep it but check for interaction
     let panDirection = 1;
+    let isUserInteracting = false;
+    
+    map.on('mousedown', () => isUserInteracting = true);
+    map.on('mouseup', () => isUserInteracting = false);
+    map.on('dragstart', () => isUserInteracting = true);
+    map.on('dragend', () => isUserInteracting = false);
+
     const animatePan = () => {
         if (!mapInstanceRef.current) return;
-        const currentCenter = map.getCenter();
-        
-        if (currentCenter.lng > 120) panDirection = -1;
-        if (currentCenter.lng < -20) panDirection = 1;
-        
-        map.panBy([0.2 * panDirection, 0], { animate: false });
+        if (!isUserInteracting) {
+            const currentCenter = map.getCenter();
+            if (currentCenter.lng > 120) panDirection = -1;
+            if (currentCenter.lng < -20) panDirection = 1;
+            map.panBy([0.1 * panDirection, 0], { animate: false });
+        }
         requestAnimationFrame(animatePan);
     };
     const animationFrame = requestAnimationFrame(animatePan);
 
-    // Cleanup
     return () => {
       cancelAnimationFrame(animationFrame);
       map.remove();
@@ -218,57 +190,62 @@ export const GlobalNodes: React.FC = () => {
   }, []);
 
   return (
-    <section className="bg-white py-16 lg:py-24 border-b border-gray-100 relative overflow-hidden">
+    <section className="bg-[#050A14] py-16 lg:py-24 border-b border-white/5 relative overflow-hidden">
+      <div className="absolute inset-0 bg-radial-glow from-blue-900/10 to-transparent opacity-50 pointer-events-none"></div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         <div className="flex flex-col lg:flex-row items-stretch gap-8 lg:gap-12">
           
-          {/* Left Text Content - Clean, vertical layout */}
+          {/* Left Text Content */}
           <div className="lg:w-5/12 flex flex-col justify-center"> 
              <div className="relative">
-                <div className="absolute top-0 left-0 w-1.5 h-full bg-guance-orange rounded-full opacity-80"></div>
+                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-guance-orange to-blue-600 rounded-full"></div>
                 <div className="pl-6">
-                    <h2 className="text-3xl lg:text-4xl font-extrabold text-gray-900 leading-tight mb-6">
-                    全球节点 <br/><span className="text-guance-orange">极速送达</span>
+                    <h2 className="text-3xl lg:text-4xl font-extrabold text-white leading-tight mb-6">
+                    全球节点 <br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-guance-orange to-blue-400">极速互联</span>
                     </h2>
-                    <p className="text-gray-600 text-lg mb-8 leading-relaxed">
+                    <p className="text-gray-400 text-lg mb-8 leading-relaxed">
                     无论您的业务位于何处，观测云遍布全球的安全合规节点网络都能确保数据的实时采集与秒级监控。
                     </p>
                 </div>
              </div>
 
              <div className="grid grid-cols-2 gap-y-8 gap-x-4 mb-8 pl-6">
-                <div>
-                    <div className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">10+</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">核心骨干网</div>
-                </div>
-                <div>
-                    <div className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">200+</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">边缘接入点</div>
-                </div>
-                <div>
-                    <div className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">99.9%</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">服务可用性</div>
-                </div>
-                <div>
-                    <div className="text-3xl lg:text-4xl font-black text-gray-900 mb-1">ms级</div>
-                    <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">数据延迟</div>
-                </div>
+                {[
+                  { val: '10+', label: '核心骨干网' },
+                  { val: '200+', label: '边缘接入点' },
+                  { val: '99.9%', label: '服务可用性' },
+                  { val: '<10ms', label: '平均延迟' },
+                ].map((stat, i) => (
+                    <div key={i}>
+                        <div className="text-3xl lg:text-4xl font-black text-white mb-1 font-mono tracking-tighter">{stat.val}</div>
+                        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{stat.label}</div>
+                    </div>
+                ))}
              </div>
 
              <div className="pl-6">
-                <a href="#" className="inline-flex items-center text-white bg-gray-900 px-6 py-3 rounded-lg font-bold hover:bg-gray-800 transition-all group shadow-lg shadow-gray-200">
-                    查看完整节点分布 <Icons.ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </a>
+                <button className="inline-flex items-center text-black bg-white hover:bg-gray-200 px-6 py-3 rounded-lg font-bold transition-all group shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    查看网络拓扑 <Icons.ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </button>
              </div>
           </div>
 
-          {/* Map Container Wrapper - Side by side, taking up remaining space */}
-          <div className="lg:w-7/12 h-[500px] lg:h-[600px] w-full relative rounded-3xl overflow-hidden shadow-2xl border border-gray-200">
+          {/* Map Container */}
+          <div className="lg:w-7/12 h-[500px] lg:h-[600px] w-full relative rounded-3xl overflow-hidden shadow-2xl border border-white/10 group">
              {/* The Map */}
-             <div ref={mapContainerRef} className="w-full h-full bg-[#F8FAFC]"></div>
+             <div ref={mapContainerRef} className="w-full h-full bg-[#050A14]"></div>
              
-             {/* Inner Shadows for depth */}
-             <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.05)] z-[400]"></div>
+             {/* Tech Overlays */}
+             <div className="absolute top-4 right-4 bg-black/80 backdrop-blur border border-white/10 p-2 rounded text-xs font-mono text-guance-accent animate-pulse">
+                LIVE NETWORK STATUS: ACTIVE
+             </div>
+             <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur border border-white/10 px-3 py-1 rounded text-[10px] font-mono text-gray-400">
+                LAT: 35.67 | LNG: 139.65
+             </div>
+             
+             {/* Vignette */}
+             <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_60px_rgba(0,0,0,0.8)] z-[400]"></div>
           </div>
 
         </div>

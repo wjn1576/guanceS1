@@ -11,7 +11,7 @@ export const Features: React.FC = () => {
         return {
           title: "基础设施监控",
           desc: "全栈可见性，覆盖您的主机、容器和 K8s 集群。支持自动发现资源，秒级监控。",
-          points: ["主机与进程监控", "Kubernetes & Docker 支持", "云厂商集成 (阿里云, AWS, Huawei)", "网络性能监控"],
+          points: ["主机与进程监控", "Kubernetes & Docker 支持", "云厂商集成 (阿里云, AWS)", "网络性能监控"],
           color: "blue"
         };
       case TabType.APM:
@@ -41,36 +41,42 @@ export const Features: React.FC = () => {
   const content = renderContent();
 
   return (
-    <section className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-24 bg-[#050A14] relative">
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4">一个平台， <br/><span className="text-guance-orange">无限可能</span></h2>
-          <p className="text-lg text-gray-500 max-w-2xl mx-auto">打破团队间的数据孤岛。观测云将开发、运维和安全团队紧密联系在一起。</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-4">一个平台， <br/><span className="gradient-text">无限可能</span></h2>
+          <p className="text-lg text-gray-400 max-w-2xl mx-auto">打破团队间的数据孤岛。观测云将开发、运维和安全团队紧密联系在一起。</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-12">
           {/* Tabs */}
           <div className="lg:w-1/3 space-y-4">
             {[
-              { id: TabType.INFRA, icon: Icons.Server, label: "基础设施" },
-              { id: TabType.APM, icon: Icons.Activity, label: "应用性能监测" },
-              { id: TabType.LOGS, icon: Icons.FileText, label: "日志" },
-              { id: TabType.RUM, icon: Icons.Globe, label: "用户体验" },
+              { id: TabType.INFRA, icon: Icons.Server, label: "基础设施", color: 'blue' },
+              { id: TabType.APM, icon: Icons.Activity, label: "应用性能监测", color: 'orange' },
+              { id: TabType.LOGS, icon: Icons.FileText, label: "日志", color: 'green' },
+              { id: TabType.RUM, icon: Icons.Globe, label: "用户体验", color: 'purple' },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center p-4 rounded-xl transition-all duration-300 border-2 text-left ${
+                className={`group w-full flex items-center p-4 rounded-xl transition-all duration-300 border text-left relative overflow-hidden ${
                   activeTab === tab.id 
-                    ? 'border-guance-orange bg-orange-50 shadow-md scale-105' 
-                    : 'border-transparent hover:bg-gray-50'
+                    ? `border-${tab.color}-500/50 bg-${tab.color}-500/10 shadow-[0_0_15px_rgba(0,0,0,0.3)]` 
+                    : 'border-white/5 hover:bg-white/5 hover:border-white/10'
                 }`}
               >
-                <div className={`p-3 rounded-lg mr-4 ${activeTab === tab.id ? 'bg-guance-orange text-white' : 'bg-gray-200 text-gray-500'}`}>
+                {activeTab === tab.id && <div className={`absolute left-0 top-0 bottom-0 w-1 bg-${tab.color}-500`}></div>}
+                
+                <div className={`p-3 rounded-lg mr-4 transition-colors ${
+                  activeTab === tab.id ? `bg-${tab.color}-500 text-white` : 'bg-white/10 text-gray-400 group-hover:text-white'
+                }`}>
                   <tab.icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className={`text-lg font-bold ${activeTab === tab.id ? 'text-gray-900' : 'text-gray-600'}`}>{tab.label}</h3>
+                  <h3 className={`text-lg font-bold ${activeTab === tab.id ? 'text-white' : 'text-gray-400 group-hover:text-white'}`}>{tab.label}</h3>
                   <p className="text-sm text-gray-500 hidden sm:block">实时洞察</p>
                 </div>
               </button>
@@ -78,26 +84,29 @@ export const Features: React.FC = () => {
           </div>
 
           {/* Content */}
-          <div className="lg:w-2/3 bg-gray-50 rounded-2xl p-8 md:p-12 border border-gray-200 relative overflow-hidden">
-            <div className={`absolute top-0 right-0 w-64 h-64 bg-${content.color}-500 opacity-5 rounded-full blur-3xl -mr-32 -mt-32`}></div>
+          <div className="lg:w-2/3 tech-border rounded-2xl p-8 md:p-12 relative overflow-hidden">
+            <div className={`absolute top-0 right-0 w-80 h-80 bg-${content.color}-600/20 rounded-full blur-[100px] -mr-40 -mt-40 pointer-events-none`}></div>
             
             <div className="relative z-10 h-full flex flex-col justify-center">
-              <h3 className="text-3xl font-bold text-gray-900 mb-6">{content.title}</h3>
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+              <h3 className="text-3xl font-bold text-white mb-6 flex items-center">
+                 {content.title}
+                 <span className={`ml-3 px-3 py-1 text-xs bg-${content.color}-500/20 text-${content.color}-300 rounded-full border border-${content.color}-500/30`}>Live</span>
+              </h3>
+              <p className="text-xl text-gray-300 mb-8 leading-relaxed">
                 {content.desc}
               </p>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {content.points.map((point, i) => (
-                  <div key={i} className="flex items-center bg-white p-4 rounded-lg shadow-sm">
-                    <div className="w-2 h-2 rounded-full bg-guance-orange mr-3"></div>
-                    <span className="font-medium text-gray-700">{point}</span>
+                  <div key={i} className="flex items-center bg-white/5 p-4 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+                    <div className={`w-2 h-2 rounded-full bg-${content.color}-500 mr-3 shadow-[0_0_8px_currentColor]`}></div>
+                    <span className="font-medium text-gray-200">{point}</span>
                   </div>
                 ))}
               </div>
 
               <div className="mt-10">
-                <a href="#" className="text-guance-orange font-bold text-lg inline-flex items-center hover:underline">
+                <a href="#" className={`text-${content.color}-400 font-bold text-lg inline-flex items-center hover:text-${content.color}-300 hover:translate-x-1 transition-all`}>
                   探索 {content.title} <Icons.ArrowRight className="ml-2 w-5 h-5"/>
                 </a>
               </div>

@@ -5,7 +5,7 @@ import { DashboardPreview } from './DashboardPreview';
 const slides = [
   {
     tag: "NEW",
-    tagText: "观测云 AI Copilot 2.0 现已发布",
+    tagText: "AI Copilot 2.0 现已发布",
     title: "新一代",
     highlight: "统一可观测",
     titleSuffix: "平台",
@@ -35,16 +35,24 @@ export const Hero: React.FC = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000); // Rotate every 5 seconds
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-        <div className="absolute -top-1/2 -right-1/4 w-[1000px] h-[1000px] bg-blue-50 rounded-full blur-3xl opacity-50"></div>
-        <div className="absolute top-1/2 -left-1/4 w-[800px] h-[800px] bg-orange-50 rounded-full blur-3xl opacity-50"></div>
+    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-[#050A14]">
+      {/* Dynamic Background */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden z-0">
+         {/* Moving Grid */}
+         <div className="absolute inset-0 bg-grid-slate-900/[0.1] bg-[bottom] border-b border-slate-100/5 animate-grid-move" style={{ backgroundSize: '60px 60px' }}></div>
+         
+         {/* Glow Spots */}
+         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/20 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow"></div>
+         <div className="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-guance-orange/10 rounded-full blur-[120px] mix-blend-screen animate-pulse-slow" style={{ animationDelay: '2s' }}></div>
+         
+         {/* Floating Particles (Simulated with CSS) */}
+         <div className="absolute w-2 h-2 bg-white/20 rounded-full top-1/4 left-1/4 animate-ping"></div>
+         <div className="absolute w-1 h-1 bg-white/30 rounded-full top-1/3 right-1/4 animate-pulse"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -58,28 +66,29 @@ export const Hero: React.FC = () => {
                  style={{ display: index === currentSlide ? 'block' : 'none' }} 
                >
                  {/* Announcement Tag */}
-                <div className="inline-flex items-center bg-white border border-gray-200 rounded-full px-4 py-1.5 mb-8 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                  <span className="bg-guance-orange text-white text-xs font-bold px-2 py-0.5 rounded-md mr-2">{slide.tag}</span>
-                  <span className="text-sm text-gray-600 font-medium">{slide.tagText} <Icons.ArrowRight className="inline w-3 h-3 ml-1"/></span>
+                <div className="inline-flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8 backdrop-blur-md hover:border-guance-orange/50 transition-colors cursor-pointer group">
+                  <span className="bg-guance-orange text-white text-xs font-bold px-2 py-0.5 rounded-md mr-2 shadow-[0_0_10px_rgba(255,106,0,0.5)]">{slide.tag}</span>
+                  <span className="text-sm text-gray-300 font-medium group-hover:text-white transition-colors">{slide.tagText} <Icons.ArrowRight className="inline w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform"/></span>
                 </div>
 
                 {/* Headline */}
-                <h1 className="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-6 leading-tight">
+                <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight drop-shadow-2xl">
                   {slide.title} <span className="gradient-text">{slide.highlight}</span> <br className="hidden md:block"/> {slide.titleSuffix}
                 </h1>
                 
                 {/* Subhead */}
-                <p className="max-w-2xl mx-auto text-xl text-gray-500 mb-10 leading-relaxed">
+                <p className="max-w-2xl mx-auto text-xl text-gray-400 mb-10 leading-relaxed">
                   {slide.desc}
                 </p>
 
                 {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-16">
-                  <a href="https://auth.guance.com/middle_page" target="_blank" rel="noopener noreferrer" className="w-full sm:w-auto px-8 py-4 bg-guance-orange text-white text-lg font-bold rounded-lg hover:bg-orange-600 transition-all shadow-lg shadow-orange-500/30 flex items-center justify-center">
-                    开始免费试用 <Icons.ArrowRight className="ml-2 w-5 h-5"/>
+                <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20">
+                  <a href="https://auth.guance.com/middle_page" target="_blank" rel="noopener noreferrer" className="relative group w-full sm:w-auto px-8 py-4 bg-guance-orange text-white text-lg font-bold rounded-lg hover:bg-orange-600 transition-all shadow-[0_0_20px_rgba(255,106,0,0.4)] hover:shadow-[0_0_40px_rgba(255,106,0,0.6)] flex items-center justify-center overflow-hidden">
+                    <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    开始免费试用 <Icons.ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform"/>
                   </a>
-                  <button className="w-full sm:w-auto px-8 py-4 bg-white text-gray-700 text-lg font-bold rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all flex items-center justify-center">
-                    <Icons.Activity className="mr-2 w-5 h-5 text-gray-500"/> 在线 Demo
+                  <button className="w-full sm:w-auto px-8 py-4 bg-white/5 text-gray-200 text-lg font-bold rounded-lg border border-white/10 hover:border-white/30 hover:bg-white/10 transition-all flex items-center justify-center backdrop-blur-sm">
+                    <Icons.Activity className="mr-2 w-5 h-5 text-guance-accent"/> 在线 Demo
                   </button>
                 </div>
                </div>
@@ -87,50 +96,54 @@ export const Hero: React.FC = () => {
         </div>
 
         {/* Carousel Indicators */}
-        <div className="flex justify-center space-x-2 mb-12">
+        <div className="flex justify-center space-x-2 mb-16">
             {slides.map((_, index) => (
                 <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`w-2 h-2 rounded-full transition-all duration-300 ${index === currentSlide ? 'w-8 bg-guance-orange' : 'bg-gray-300 hover:bg-gray-400'}`}
+                    className={`h-1 rounded-full transition-all duration-500 ${index === currentSlide ? 'w-12 bg-guance-orange shadow-[0_0_10px_#FF6A00]' : 'w-2 bg-gray-700 hover:bg-gray-500'}`}
                     aria-label={`Go to slide ${index + 1}`}
                 />
             ))}
         </div>
 
-        {/* Dashboard Simulation */}
-        <div className="relative mt-8">
-             <DashboardPreview />
+        {/* Dashboard Simulation - Holographic Style */}
+        <div className="relative mt-4 group">
+             <div className="absolute -inset-1 bg-gradient-to-r from-guance-orange to-blue-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+             <div className="relative">
+                <DashboardPreview />
+             </div>
+             
              {/* Floating badges */}
-             <div className="absolute -left-4 top-1/4 bg-white p-3 rounded-lg shadow-xl border border-gray-100 hidden lg:flex items-center animate-bounce duration-[3000ms]">
-                <div className="bg-green-100 p-2 rounded-md mr-3">
-                   <Icons.CheckCircle className="w-6 h-6 text-green-600" />
+             <div className="absolute -left-8 top-1/4 bg-[#0B1121]/90 backdrop-blur-xl p-3 rounded-lg border border-green-500/30 hidden lg:flex items-center animate-bounce duration-[3000ms] shadow-[0_0_20px_rgba(34,197,94,0.2)]">
+                <div className="bg-green-500/20 p-2 rounded-md mr-3">
+                   <Icons.CheckCircle className="w-5 h-5 text-green-500" />
                 </div>
                 <div className="text-left">
-                   <div className="text-xs text-gray-500 font-medium">状态</div>
-                   <div className="text-sm font-bold text-gray-800">所有系统运行正常</div>
+                   <div className="text-xs text-gray-400 font-medium">系统状态</div>
+                   <div className="text-sm font-bold text-white font-mono">SYSTEM ONLINE</div>
                 </div>
              </div>
-             <div className="absolute -right-8 bottom-1/4 bg-white p-3 rounded-lg shadow-xl border border-gray-100 hidden lg:flex items-center animate-bounce duration-[4000ms]">
-                <div className="bg-blue-100 p-2 rounded-md mr-3">
-                   <Icons.Zap className="w-6 h-6 text-blue-600" />
+             <div className="absolute -right-12 bottom-1/4 bg-[#0B1121]/90 backdrop-blur-xl p-3 rounded-lg border border-blue-500/30 hidden lg:flex items-center animate-bounce duration-[4000ms] shadow-[0_0_20px_rgba(59,130,246,0.2)]">
+                <div className="bg-blue-500/20 p-2 rounded-md mr-3">
+                   <Icons.Zap className="w-5 h-5 text-blue-500" />
                 </div>
                 <div className="text-left">
-                   <div className="text-xs text-gray-500 font-medium">吞吐量</div>
-                   <div className="text-sm font-bold text-gray-800">45,200 req/sec</div>
+                   <div className="text-xs text-gray-400 font-medium">实时吞吐量</div>
+                   <div className="text-sm font-bold text-white font-mono">45,200 req/s</div>
                 </div>
              </div>
         </div>
 
         {/* Logos */}
-        <div className="mt-20 opacity-60">
-            <p className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-6">2000+ 企业信赖的选择</p>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center grayscale">
-                <div className="text-xl font-bold text-gray-400 flex items-center"><Icons.Cloud className="mr-2"/> TechCorp</div>
-                <div className="text-xl font-bold text-gray-400 flex items-center"><Icons.Database className="mr-2"/> DataFlow</div>
-                <div className="text-xl font-bold text-gray-400 flex items-center"><Icons.Server className="mr-2"/> NetScale</div>
-                <div className="text-xl font-bold text-gray-400 flex items-center"><Icons.ShieldCheck className="mr-2"/> SecureX</div>
-                <div className="text-xl font-bold text-gray-400 flex items-center"><Icons.Cpu className="mr-2"/> AI_Labs</div>
+        <div className="mt-24 opacity-40 hover:opacity-100 transition-opacity duration-500">
+            <p className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em] mb-8">Trusted by Tech Giants</p>
+            <div className="flex flex-wrap justify-center gap-10 md:gap-20 items-center">
+                {['TechCorp', 'DataFlow', 'NetScale', 'SecureX', 'AI_Labs'].map((name, i) => (
+                    <div key={i} className="text-xl font-bold text-gray-400 hover:text-white transition-colors flex items-center">
+                        <Icons.Cpu className="mr-2 w-5 h-5"/> {name}
+                    </div>
+                ))}
             </div>
         </div>
 

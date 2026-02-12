@@ -12,7 +12,7 @@ interface Message {
 export const AiChatWidget: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: '您好！我是观测云 AI 助手。关于产品功能、价格或技术问题，有什么可以帮您的吗？' }
+    { role: 'assistant', content: '您好，欢迎连接观测云智能终端。请下达指令。' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +58,7 @@ export const AiChatWidget: React.FC = () => {
          const newHistory = [...prev];
          const lastMsg = newHistory[newHistory.length - 1];
          if (lastMsg.role === 'assistant') {
-            lastMsg.content = '抱歉，连接服务器时出现问题，请稍后再试。';
+            lastMsg.content = '信号中断，连接服务器失败。';
          }
          return newHistory;
       });
@@ -69,87 +69,94 @@ export const AiChatWidget: React.FC = () => {
 
   return (
     <>
-      {/* Floating Button */}
+      {/* Floating Button with Holographic Effect */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-6 right-6 z-50 p-4 rounded-full shadow-2xl transition-all duration-300 flex items-center justify-center group ${
-          isOpen ? 'bg-gray-800 rotate-90' : 'bg-guance-orange hover:scale-110 hover:-translate-y-1'
-        } text-white`}
-        aria-label="打开 AI 客服"
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-[0_0_20px_rgba(255,106,0,0.4)] hover:shadow-[0_0_30px_rgba(255,106,0,0.6)] transition-all duration-300 flex items-center justify-center transform hover:scale-110 ${
+          isOpen ? 'bg-white text-gray-900 rotate-90' : 'bg-gradient-to-br from-guance-orange to-red-600 text-white'
+        }`}
+        aria-label="联系智能客服"
       >
-        {isOpen ? <Icons.X className="w-6 h-6" /> : <Icons.MessageSquare className="w-6 h-6" />}
-        {!isOpen && (
-            <span className="absolute right-full mr-3 bg-gray-900 text-white text-xs font-bold px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                AI 客服
-            </span>
-        )}
+        {isOpen ? <Icons.X className="w-6 h-6" /> : <Icons.Headphones className="w-6 h-6 animate-pulse" />}
       </button>
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 md:right-6 z-50 w-[calc(100vw-32px)] md:w-[380px] h-[500px] max-h-[70vh] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden animate-fade-in-up origin-bottom-right">
+        <div className="fixed bottom-24 right-4 md:right-6 z-50 w-[calc(100vw-32px)] md:w-[380px] h-[550px] max-h-[75vh] bg-[#0B1121]/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 flex flex-col overflow-hidden animate-fade-in-up origin-bottom-right font-sans">
           
-          {/* Header */}
-          <div className="bg-[#0B1121] p-4 flex items-center justify-between shadow-md relative z-10">
+          {/* Header - Cyberpunk Gradient */}
+          <div className="bg-gradient-to-r from-guance-orange/80 to-purple-600/80 p-4 flex items-center justify-between shadow-lg relative z-10 text-white border-b border-white/10">
             <div className="flex items-center space-x-3">
-               <div className="bg-white/10 p-1.5 rounded-lg">
-                  <Icons.Bot className="w-5 h-5 text-guance-orange" />
+               <div className="bg-black/20 p-2 rounded-lg backdrop-blur-sm border border-white/10">
+                  <Icons.Cpu className="w-5 h-5 text-white" />
                </div>
                <div>
-                   <span className="text-white font-bold block text-sm">观测云智能助手</span>
-                   <div className="flex items-center mt-0.5">
-                       <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mr-1.5"></div>
-                       <span className="text-[10px] text-gray-400">在线</span>
-                   </div>
+                   <span className="font-bold block text-base tracking-wide font-mono">GUANCE AI CORE</span>
+                   <span className="text-white/70 text-[10px] flex items-center font-mono uppercase tracking-wider">
+                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full mr-1.5 animate-pulse"></span>
+                     System Online
+                   </span>
                </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors p-1 hover:bg-white/10 rounded-md">
+            <button onClick={() => setIsOpen(false)} className="text-white/80 hover:text-white transition-colors p-1 hover:bg-white/10 rounded">
               <Icons.Minimize2 className="w-4 h-4" />
             </button>
           </div>
 
-          {/* Messages Area */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-5 bg-[#F8FAFC]">
-            <div className="text-center text-xs text-gray-400 my-4">
-                <span>今天</span>
+          {/* Messages Area - Dark Grid Background */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-6 bg-[#050A14] relative">
+            <div className="absolute inset-0 bg-grid-slate-900/[0.1] pointer-events-none"></div>
+            
+            <div className="flex justify-center relative z-10">
+                <span className="text-[10px] text-gray-500 bg-white/5 px-2 py-0.5 rounded border border-white/5 font-mono">SESSION START</span>
             </div>
             
             {messages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in items-end space-x-2 relative z-10`}>
+                
                 {msg.role === 'assistant' && (
-                    <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 flex-shrink-0 mt-1 shadow-sm">
-                        <Icons.Bot className="w-4 h-4 text-guance-orange" />
+                    <div className="w-8 h-8 rounded-full bg-[#1E293B] border border-guance-orange/50 flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(255,106,0,0.2)] text-guance-orange">
+                        <Icons.Bot className="w-4 h-4" />
                     </div>
                 )}
+
                 <div 
-                  className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${
+                  className={`max-w-[85%] px-4 py-3 text-sm shadow-md backdrop-blur-md ${
                     msg.role === 'user' 
-                      ? 'bg-guance-orange text-white rounded-br-none' 
-                      : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+                      ? 'bg-guance-orange/90 text-white rounded-2xl rounded-br-sm border border-orange-400/30' 
+                      : 'bg-white/10 text-gray-200 border border-white/10 rounded-2xl rounded-bl-sm'
                   }`}
                 >
                   {msg.role === 'user' ? (
                     msg.content
                   ) : (
-                    <div className="prose prose-sm max-w-none prose-p:my-1 prose-a:text-blue-600">
+                    <div className="prose prose-invert prose-sm max-w-none prose-p:my-1 prose-a:text-guance-orange prose-pre:bg-black/50 prose-pre:border prose-pre:border-white/10">
                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
                          {msg.content}
                        </ReactMarkdown>
                     </div>
                   )}
                 </div>
+
+                {msg.role === 'user' && (
+                    <div className="w-8 h-8 rounded-full bg-white/10 border border-white/20 flex items-center justify-center flex-shrink-0 text-gray-300">
+                        <Icons.User className="w-4 h-4" />
+                    </div>
+                )}
               </div>
             ))}
             
             {isLoading && messages[messages.length - 1].content === '' && (
-               <div className="flex justify-start animate-fade-in">
-                 <div className="w-8 h-8 rounded-full bg-white border border-gray-200 flex items-center justify-center mr-2 flex-shrink-0 shadow-sm">
-                        <Icons.Bot className="w-4 h-4 text-guance-orange" />
+               <div className="flex justify-start animate-fade-in items-end space-x-2 relative z-10">
+                 <div className="w-8 h-8 rounded-full bg-[#1E293B] border border-guance-orange/50 flex items-center justify-center flex-shrink-0 shadow-[0_0_10px_rgba(255,106,0,0.2)] text-guance-orange">
+                        <Icons.Bot className="w-4 h-4" />
                  </div>
-                 <div className="bg-white p-3 rounded-2xl rounded-tl-none border border-gray-100 shadow-sm flex space-x-1 items-center h-[46px]">
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-75"></div>
-                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-150"></div>
+                 <div className="bg-white/5 px-4 py-3 rounded-2xl rounded-bl-sm border border-white/10 shadow-sm">
+                    <div className="flex space-x-1 items-center h-4">
+                        <div className="w-1.5 h-1.5 bg-guance-orange rounded-full animate-bounce"></div>
+                        <div className="w-1.5 h-1.5 bg-guance-orange rounded-full animate-bounce delay-75"></div>
+                        <div className="w-1.5 h-1.5 bg-guance-orange rounded-full animate-bounce delay-150"></div>
+                    </div>
                  </div>
                </div>
             )}
@@ -157,29 +164,24 @@ export const AiChatWidget: React.FC = () => {
           </div>
 
           {/* Input Area */}
-          <form onSubmit={handleSend} className="p-3 bg-white border-t border-gray-100 relative z-10">
-            <div className="relative flex items-center">
+          <div className="bg-[#0B1121] p-4 border-t border-white/10 relative z-20">
+             <form onSubmit={handleSend} className="relative flex items-center group">
               <input
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="输入您的问题..."
-                className="flex-1 bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-10 py-3 focus:outline-none focus:ring-2 focus:ring-guance-orange/20 focus:border-guance-orange transition-all text-sm placeholder-gray-400"
+                placeholder="输入指令..."
+                className="flex-1 bg-black/30 text-white border border-white/10 rounded-full pl-5 pr-12 py-3 focus:outline-none focus:border-guance-orange/50 focus:ring-1 focus:ring-guance-orange/50 transition-all text-sm font-mono placeholder-gray-600"
               />
               <button 
                 type="submit" 
                 disabled={isLoading || !input.trim()}
-                className="absolute right-2 p-1.5 bg-guance-orange text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all transform active:scale-95 shadow-sm"
+                className="absolute right-1.5 p-2 bg-guance-orange text-white rounded-full hover:bg-orange-500 disabled:opacity-50 disabled:bg-gray-700 disabled:cursor-not-allowed transition-all shadow-[0_0_10px_rgba(255,106,0,0.3)]"
               >
                 <Icons.Send className="w-4 h-4" />
               </button>
-            </div>
-            <div className="text-center mt-2 flex justify-center items-center">
-               <span className="text-[10px] text-gray-400 flex items-center">
-                  <Icons.ShieldCheck className="w-3 h-3 mr-1" /> 内容由 AI 生成，仅供参考
-               </span>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       )}
     </>

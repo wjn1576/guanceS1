@@ -26,7 +26,11 @@ import {
   MessageSquare,
   Send,
   Minimize2,
-  Bot
+  Bot,
+  Headphones,
+  User,
+  Sparkles,
+  QrCode
 } from 'lucide-react';
 
 export const Icons = {
@@ -56,5 +60,9 @@ export const Icons = {
   MessageSquare,
   Send,
   Minimize2,
-  Bot
+  Bot,
+  Headphones,
+  User,
+  Sparkles,
+  QrCode
 };
