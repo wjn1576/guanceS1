@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>观测云 Guance | 统一可观测性平台</title>
+    <meta name="description" content="实时监控指标、链路追踪和日志，实现统一可观测性。" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              guance: {
+                orange: '#FF6A00',
+                dark: '#0B1121',
+                slate: '#1E293B',
+                light: '#F8FAFC'
+              }
+            },
+            animation: {
+              'fade-in': 'fadeIn 0.5s ease-in-out',
+              'fade-in-up': 'fadeInUp 0.5s ease-out',
+              'flow': 'flow 1.5s linear infinite',
+            },
+            keyframes: {
+              fadeIn: {
+                '0%': { opacity: '0' },
+                '100%': { opacity: '1' },
+              },
+              fadeInUp: {
+                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+              }
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #F8FAFC;
+        overflow-x: hidden;
+      }
+      .gradient-text {
+        background: linear-gradient(90deg, #FF6A00 0%, #FF8F00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .glass-nav {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+      }
+      /* Leaflet Custom Overrides */
+      .leaflet-container {
+        background: #F8FAFC;
+        font-family: 'Inter', sans-serif;
+      }
+      .custom-pin {
+        background: transparent;
+        border: none;
+      }
+      /* Map Line Animation */
+      .flowing-line {
+        stroke-dasharray: 8, 12;
+        animation: flow 1s linear infinite; /* Faster animation */
+        stroke-linecap: round;
+      }
+      @keyframes flow {
+        to {
+          stroke-dashoffset: -20;
+        }
+      }
+      /* Custom Cluster Icon */
+      .custom-cluster {
+        background: rgba(59, 130, 246, 0.2);
+        border: 2px solid rgba(59, 130, 246, 0.5);
+        border-radius: 50%;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        backdrop-filter: blur(2px);
+      }
+      .custom-cluster div {
+        width: 30px;
+        height: 30px;
+        margin: 5px;
+        background-color: #3B82F6;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "@google/genai": "https://esm.sh/@google/genai@^1.41.0",
+    "recharts": "https://esm.sh/recharts@^3.7.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "lucide-react": "https://esm.sh/lucide-react@^0.563.0",
+    "react-markdown": "https://esm.sh/react-markdown@9?bundle",
+    "remark-gfm": "https://esm.sh/remark-gfm@4?bundle",
+    "react-syntax-highlighter": "https://esm.sh/react-syntax-highlighter@15?bundle",
+    "react-syntax-highlighter/dist/esm/styles/prism": "https://esm.sh/react-syntax-highlighter@15/dist/esm/styles/prism?bundle",
+    "react-syntax-highlighter/": "https://esm.sh/react-syntax-highlighter@^16.1.0/",
+    "leaflet": "https://esm.sh/leaflet@1.9.4",
+    "leaflet.markercluster": "https://esm.sh/leaflet.markercluster@1.5.3"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
